@@ -17,7 +17,7 @@ async def init_db():
                 email TEXT UNIQUE NOT NULL,
                 username TEXT UNIQUE NOT NULL,
                 password_hash TEXT NOT NULL,
-                avatar_url TEXT DEFAULT '',
+                avatar_url TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
@@ -26,8 +26,8 @@ async def init_db():
                 id TEXT PRIMARY KEY,
                 user_id TEXT NOT NULL,
                 name TEXT NOT NULL,
-                description TEXT DEFAULT '',
-                system_prompt TEXT DEFAULT '',
+                description TEXT,
+                system_prompt TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id)
@@ -49,7 +49,7 @@ async def init_db():
                 id TEXT PRIMARY KEY,
                 conversation_id TEXT NOT NULL,
                 role TEXT NOT NULL,
-                content TEXT NOT '',
+                content TEXT NOT NULL,
                 artifacts TEXT DEFAULT '[]',
                 attachments TEXT DEFAULT '[]',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -69,7 +69,7 @@ async def init_db():
                 id TEXT PRIMARY KEY,
                 user_id TEXT NOT NULL,
                 name TEXT NOT NULL,
-                description TEXT DEFAULT '',
+                description TEXT,
                 prompt_template TEXT NOT NULL,
                 is_active BOOLEAN DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
