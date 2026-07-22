@@ -1,0 +1,30 @@
+@import "tailwindcss";
+@import "highlight.js/styles/github-dark.css";
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 3px;
+}
+
+.prose pre {
+  background: #1a1a2e !important;
+  border-radius: 8px;
+}
+
+.prose code {
+  color: #e94560;
+  font-weight: 500;
+}

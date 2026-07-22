@@ -1,0 +1,10 @@
+from fastapi import APIRouter
+from app.api.routes import projects, chat, memory, skills, files, analytics
+
+router = APIRouter()
+router.include_router(projects.router, prefix="/projects", tags=["projects"])
+router.include_router(chat.router, prefix="/chat", tags=["chat"])
+router.include_router(memory.router, prefix="/memory", tags=["memory"])
+router.include_router(skills.router, prefix="/skills", tags=["skills"])
+router.include_router(files.router, prefix="/files", tags=["files"])
+router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])

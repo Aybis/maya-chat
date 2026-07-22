@@ -1,0 +1,89 @@
+from pydantic import BaseModel
+from typing import Optional, List
+from datetime import datetime
+
+
+class ProjectBase(BaseModel):
+    name: str
+    description: str = ""
+    system_prompt: str = ""
+
+
+class ProjectCreate(ProjectBase):
+    pass
+
+
+class Project(ProjectBase):
+    id: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class ConversationBase(BaseModel):
+    project_id: Optional[str] = None
+    title: str = "New Chat"
+    model: str = "gpt-4o"
+
+
+class ConversationCreate(ConversationBase):
+    pass
+
+
+class Conversation(ConversationBase):
+    id: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class MessageBase(BaseModel):
+    role: str
+    content: str
+    artifacts: List[dict] = []
+    attachments: List[dict] = []
+
+
+class MessageCreate(MessageBase):
+    conversation_id: str
+
+
+class Message(MessageBase):
+    id: str
+    conversation_id: str
+    created_at: datetime
+
+
+class MemoryBase(BaseModel):
+    content: str
+    category: str = "general"
+
+
+class Memory(MemoryBase):
+    id: str
+    created_at: datetime
+
+
+class SkillBase(BaseModel):
+    name: str
+    description: str = ""
+    prompt_template: str
+    is_active: bool = True
+
+
+class Skill(SkillBase):
+    id: str
+    created_at: datetime
+
+
+class ChatRequest(BaseModel):
+    conversation_id: str
+    message: str
+    model: Optional[str] = None
+    attachments: List[dict] = []
+    stream: bool = True
+
+
+class ArtifactData(BaseModel):
+    type: str  # code, svg, html, markdown, json
+    content: str
+    language: Optional[str] = None
+    title: Optional[str] = None
