@@ -12,22 +12,36 @@ async def get_db():
 async def init_db():
     async with aiosqlite.connect(settings.database_url.replace("sqlite+aiosqlite:///", "")) as db:
         await db.executescript("""
+            CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY,
+                email TEXT UNIQUE NOT NULL,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                avatar_url TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+
             CREATE TABLE IF NOT EXISTS projects (
                 id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
                 name TEXT NOT NULL,
                 description TEXT DEFAULT '',
                 system_prompt TEXT DEFAULT '',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id)
             );
             
             CREATE TABLE IF NOT EXISTS conversations (
                 id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
                 project_id TEXT,
                 title TEXT DEFAULT 'New Chat',
                 model TEXT DEFAULT 'gpt-4o',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id),
                 FOREIGN KEY (project_id) REFERENCES projects(id)
             );
             
@@ -44,33 +58,40 @@ async def init_db():
             
             CREATE TABLE IF NOT EXISTS memories (
                 id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
                 content TEXT NOT NULL,
                 category TEXT DEFAULT 'general',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id)
             );
             
             CREATE TABLE IF NOT EXISTS skills (
                 id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
                 name TEXT NOT NULL,
                 description TEXT DEFAULT '',
                 prompt_template TEXT NOT NULL,
                 is_active BOOLEAN DEFAULT 1,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id)
             );
             
             CREATE TABLE IF NOT EXISTS files (
                 id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
                 filename TEXT NOT NULL,
                 filepath TEXT NOT NULL,
                 mime_type TEXT,
                 size INTEGER,
                 conversation_id TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id),
                 FOREIGN KEY (conversation_id) REFERENCES conversations(id)
             );
             
             CREATE TABLE IF NOT EXISTS token_usage (
                 id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
                 conversation_id TEXT NOT NULL,
                 provider TEXT NOT NULL,
                 model TEXT NOT NULL,
@@ -80,6 +101,7 @@ async def init_db():
                 output_cost REAL DEFAULT 0,
                 total_cost REAL DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id),
                 FOREIGN KEY (conversation_id) REFERENCES conversations(id)
             );
         """)

@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom'
-import { MessageSquare, Folder, Brain, Wand2, BarChart3, Settings, Plus } from 'lucide-react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { MessageSquare, Folder, Brain, Wand2, BarChart3, Settings, Plus, LogOut } from 'lucide-react'
+import { useAuthStore } from '../stores/auth'
 
 const navItems = [
   { to: '/projects', icon: Folder, label: 'Projects' },
@@ -10,6 +11,15 @@ const navItems = [
 ]
 
 export default function Sidebar() {
+  const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
+
   return (
     <aside className="w-64 bg-warm-100 border-r border-warm-200 flex flex-col h-full">
       {/* Header */}
@@ -48,16 +58,29 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* User/Status */}
+      {/* User */}
       <div className="p-3 border-t border-warm-200">
-        <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center text-amber-700 font-medium text-sm">
-            M
+        <div className="flex items-center justify-between px-3 py-2">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center text-amber-700 font-medium text-sm">
+              {user?.username?.charAt(0)?.toUpperCase() || 'U'}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-medium text-warm-800 truncate">
+                {user?.username || 'User'}
+              </div>
+              <div className="text-xs text-warm-500 truncate">
+                {user?.email || ''}
+              </div>
+            </div>
           </div>
-          <div>
-            <div className="text-sm font-medium text-warm-800">Maya</div>
-            <div className="text-xs text-warm-500">Free tier</div>
-          </div>
+          <button
+            onClick={handleLogout}
+            className="p-1.5 text-warm-400 hover:text-red-500 hover:bg-warm-200 rounded-lg transition-colors"
+            title="Logout"
+          >
+            <LogOut size={16} />
+          </button>
         </div>
       </div>
     </aside>

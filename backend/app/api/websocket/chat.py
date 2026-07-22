@@ -13,12 +13,26 @@ ws_router = APIRouter()
 @ws_router.websocket("/ws/chat")
 async def websocket_chat(websocket: WebSocket):
     await websocket.accept()
-
+    
+    # For now, we'll get user_id from the first message
+    # In production, authenticate via query param or header
+    user_id = None
+    
     async for db in get_db():
         try:
             while True:
                 data = await websocket.receive_text()
                 request = ChatRequest(**json.loads(data))
+                
+                # Get user_id from conversation
+                if not user_id:
+                    cursor = await db.execute(
+                        "SELECT user_id FROM conversations WHERE id = ?",
+                        (request.conversation_id,)
+                    )
+                    row = await cursor.fetchone()
+                    if row:
+                        user_id = row["user_id"]
 
                 # Get conversation history
                 cursor = await db.execute(
@@ -58,6 +72,7 @@ async def websocket_chat(websocket: WebSocket):
                     model=request.model or "gpt-4o",
                     system_prompt=system_prompt,
                     conversation_id=request.conversation_id,
+                    user_id=user_id,
                 ):
                     parsed = json.loads(chunk)
                     await websocket.send_text(chunk)

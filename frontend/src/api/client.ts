@@ -1,15 +1,46 @@
 const BASE_URL = '/api/v1'
 
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
+  const token = localStorage.getItem('token')
   const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    },
     ...options,
   })
+  if (res.status === 401) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    window.location.href = '/login'
+    throw new Error('Unauthorized')
+  }
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const api = {
+  // Auth
+  login: async (email: string, password: string) => {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+    if (!res.ok) throw new Error(`Login failed: ${res.status}`)
+    return res.json()
+  },
+
+  register: async (email: string, username: string, password: string) => {
+    const res = await fetch(`${BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, username, password }),
+    })
+    if (!res.ok) throw new Error(`Registration failed: ${res.status}`)
+    return res.json()
+  },
+
   // Projects
   getProjects: () => fetchApi<Project[]>('/projects'),
   createProject: (data: Partial<Project>) => fetchApi<Project>('/projects', { method: 'POST', body: JSON.stringify(data) }),
@@ -38,7 +69,12 @@ export const api = {
     const formData = new FormData()
     formData.append('file', file)
     if (conversationId) formData.append('conversation_id', conversationId)
-    return fetchApi('/files/upload', { method: 'POST', body: formData })
+    const token = localStorage.getItem('token')
+    return fetch(`${BASE_URL}/files/upload`, { 
+      method: 'POST', 
+      body: formData,
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    })
   },
   
   // Analytics

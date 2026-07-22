@@ -17,13 +17,13 @@ PRICING = {
         "claude-haiku-4-20250514": {"input": 0.80, "output": 4.00},
     },
     "openrouter": {
-        "default": {"input": 2.50, "output": 10.00},  # varies by model
+        "default": {"input": 2.50, "output": 10.00},
     },
     "9router": {
-        "default": {"input": 0.00, "output": 0.00},  # free tier
+        "default": {"input": 0.00, "output": 0.00},
     },
     "surplus": {
-        "default": {"input": 0.50, "output": 2.00},  # cheap spot pricing
+        "default": {"input": 0.50, "output": 2.00},
     },
 }
 
@@ -33,10 +33,10 @@ async def track_usage(
     model: str,
     prompt_tokens: int,
     completion_tokens: int,
+    user_id: str = None,
 ):
     """Track token usage and calculate cost."""
 
-    # Get pricing for this model
     provider_pricing = PRICING.get(provider, {})
     model_pricing = provider_pricing.get(model, provider_pricing.get("default", {"input": 0, "output": 0}))
 
@@ -47,10 +47,11 @@ async def track_usage(
     async for db in get_db():
         await db.execute(
             """INSERT INTO token_usage 
-               (id, conversation_id, provider, model, prompt_tokens, completion_tokens, input_cost, output_cost, total_cost, created_at) 
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+               (id, user_id, conversation_id, provider, model, prompt_tokens, completion_tokens, input_cost, output_cost, total_cost, created_at) 
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 str(uuid.uuid4()),
+                user_id,
                 conversation_id,
                 provider,
                 model,
@@ -65,8 +66,8 @@ async def track_usage(
         await db.commit()
 
 
-async def get_usage_summary(start_date: date = None, end_date: date = None) -> dict:
-    """Get aggregated usage summary."""
+async def get_usage_summary(user_id: str, start_date: date = None, end_date: date = None) -> dict:
+    """Get aggregated usage summary for a user."""
     if not start_date:
         start_date = date.today()
     if not end_date:
@@ -81,9 +82,9 @@ async def get_usage_summary(start_date: date = None, end_date: date = None) -> d
                 SUM(total_cost) as total_cost,
                 provider
                FROM token_usage 
-               WHERE DATE(created_at) BETWEEN ? AND ?
+               WHERE user_id = ? AND DATE(created_at) BETWEEN ? AND ?
                GROUP BY provider""",
-            (start_date.isoformat(), end_date.isoformat())
+            (user_id, start_date.isoformat(), end_date.isoformat())
         )
         rows = await cursor.fetchall()
 
@@ -110,8 +111,8 @@ async def get_usage_summary(start_date: date = None, end_date: date = None) -> d
         return summary
 
 
-async def get_daily_usage(days: int = 30) -> list[dict]:
-    """Get daily usage trend."""
+async def get_daily_usage(user_id: str, days: int = 30) -> list[dict]:
+    """Get daily usage trend for a user."""
     async for db in get_db():
         cursor = await db.execute(
             """SELECT 
@@ -119,10 +120,10 @@ async def get_daily_usage(days: int = 30) -> list[dict]:
                 SUM(total_cost) as cost,
                 SUM(prompt_tokens + completion_tokens) as tokens
                FROM token_usage 
-               WHERE created_at >= datetime('now', '-' || ? || ' days')
+               WHERE user_id = ? AND created_at >= datetime('now', '-' || ? || ' days')
                GROUP BY DATE(created_at)
                ORDER BY date""",
-            (str(days),)
+            (user_id, str(days),)
         )
         rows = await cursor.fetchall()
         return [dict(row) for row in rows]
