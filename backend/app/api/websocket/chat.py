@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.services.llm import llm_service
+from app.services.memory import get_memories_context
 from app.db.database import get_db
 from app.models.schemas import ChatRequest
 
@@ -44,6 +45,11 @@ async def websocket_chat(websocket: WebSocket):
                 )
                 project = await cursor.fetchone()
                 system_prompt = project["system_prompt"] if project else ""
+                
+                # Include memory context
+                memory_context = await get_memories_context()
+                if memory_context:
+                    system_prompt = f"{system_prompt}\n\n{memory_context}" if system_prompt else memory_context
 
                 # Stream response
                 full_response = ""

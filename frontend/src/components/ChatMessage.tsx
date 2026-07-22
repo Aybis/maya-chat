@@ -3,6 +3,7 @@ import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { User, Bot } from 'lucide-react'
+import ArtifactRenderer from './ArtifactRenderer'
 
 interface Props {
   message: Message
@@ -23,6 +24,13 @@ export default function ChatMessage({ message }: Props) {
             {message.content}
           </Markdown>
         </div>
+        {message.artifacts && message.artifacts.length > 0 && (
+          <div className="mt-4 space-y-2">
+            {message.artifacts.map((artifact, i) => (
+              <ArtifactRenderer key={i} artifact={artifact} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
