@@ -30,60 +30,58 @@ export default function SkillsPage() {
     <div className="p-8 max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Skills</h1>
-          <p className="text-gray-400">Custom prompt templates for recurring tasks.</p>
+          <h1 className="text-2xl font-serif font-semibold text-warm-800">Skills</h1>
+          <p className="text-warm-500">Custom prompt templates for recurring tasks</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg flex items-center gap-2"
+          className="bg-amber-400 hover:bg-amber-500 text-warm-900 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium"
         >
           <Plus size={16} /> New Skill
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-gray-900 rounded-lg p-6 mb-6 space-y-4">
+        <div className="bg-white rounded-2xl border border-warm-200 p-6 mb-6 space-y-4">
           <input
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             placeholder="Skill name"
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2"
+            className="w-full bg-warm-50 border border-warm-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
           />
           <input
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             placeholder="Description"
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2"
+            className="w-full bg-warm-50 border border-warm-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
           />
           <textarea
             value={form.prompt_template}
             onChange={(e) => setForm({ ...form, prompt_template: e.target.value })}
             placeholder="Use {{message}} where the user's input should go..."
             rows={4}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2"
+            className="w-full bg-warm-50 border border-warm-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
           />
-          <button onClick={handleCreate} className="bg-purple-600 px-4 py-2 rounded-lg">
+          <button onClick={handleCreate} className="bg-amber-400 hover:bg-amber-500 px-4 py-2 rounded-xl text-sm font-medium">
             Create Skill
           </button>
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {skills?.map((skill: Skill) => (
-          <div key={skill.id} className="bg-gray-900 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">{skill.name}</h3>
-                <p className="text-sm text-gray-400">{skill.description}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className={`text-xs px-2 py-0.5 rounded ${skill.is_active ? 'bg-green-900 text-green-400' : 'bg-gray-800 text-gray-500'}`}>
-                  {skill.is_active ? 'Active' : 'Inactive'}
-                </span>
-                <button onClick={() => handleDelete(skill.id)} className="text-gray-500 hover:text-red-400">
-                  <Trash2 size={16} />
-                </button>
-              </div>
+          <div key={skill.id} className="flex items-center justify-between bg-white rounded-xl border border-warm-200 p-4">
+            <div>
+              <h3 className="font-medium text-warm-800">{skill.name}</h3>
+              <p className="text-sm text-warm-500">{skill.description}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`text-xs px-2 py-0.5 rounded ${skill.is_active ? 'bg-green-100 text-green-700' : 'bg-warm-100 text-warm-500'}`}>
+                {skill.is_active ? 'Active' : 'Inactive'}
+              </span>
+              <button onClick={() => handleDelete(skill.id)} className="text-warm-400 hover:text-red-500">
+                <Trash2 size={16} />
+              </button>
             </div>
           </div>
         ))}

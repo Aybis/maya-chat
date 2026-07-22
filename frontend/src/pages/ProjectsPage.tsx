@@ -30,57 +30,55 @@ export default function ProjectsPage() {
     <div className="p-8 max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Projects</h1>
-          <p className="text-gray-400">Organize your conversations with custom system prompts.</p>
+          <h1 className="text-2xl font-serif font-semibold text-warm-800">Projects</h1>
+          <p className="text-warm-500">Organize conversations with custom prompts</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg flex items-center gap-2"
+          className="bg-amber-400 hover:bg-amber-500 text-warm-900 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium transition-colors"
         >
           <Plus size={16} /> New Project
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-gray-900 rounded-lg p-6 mb-6 space-y-4">
+        <div className="bg-white rounded-2xl border border-warm-200 p-6 mb-6 space-y-4">
           <input
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             placeholder="Project name"
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2"
+            className="w-full bg-warm-50 border border-warm-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
           />
           <textarea
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             placeholder="Description"
             rows={2}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2"
+            className="w-full bg-warm-50 border border-warm-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
           />
           <textarea
             value={form.system_prompt}
             onChange={(e) => setForm({ ...form, system_prompt: e.target.value })}
-            placeholder="System prompt for this project..."
+            placeholder="System prompt..."
             rows={4}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2"
+            className="w-full bg-warm-50 border border-warm-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
           />
-          <button onClick={handleCreate} className="bg-purple-600 px-4 py-2 rounded-lg">
+          <button onClick={handleCreate} className="bg-amber-400 hover:bg-amber-500 px-4 py-2 rounded-xl text-sm font-medium">
             Create Project
           </button>
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {projects?.map((project: Project) => (
-          <div key={project.id} className="bg-gray-900 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">{project.name}</h3>
-                <p className="text-sm text-gray-400">{project.description}</p>
-              </div>
-              <button onClick={() => handleDelete(project.id)} className="text-gray-500 hover:text-red-400">
-                <Trash2 size={16} />
-              </button>
+          <div key={project.id} className="flex items-center justify-between bg-white rounded-xl border border-warm-200 p-4">
+            <div>
+              <h3 className="font-medium text-warm-800">{project.name}</h3>
+              <p className="text-sm text-warm-500">{project.description}</p>
             </div>
+            <button onClick={() => handleDelete(project.id)} className="text-warm-400 hover:text-red-500">
+              <Trash2 size={16} />
+            </button>
           </div>
         ))}
       </div>

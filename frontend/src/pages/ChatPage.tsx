@@ -4,6 +4,7 @@ import ChatInput from '../components/ChatInput'
 import { useWebSocket } from '../hooks/useWebSocket'
 import { Message } from '../types'
 import { api } from '../api/client'
+import { Sparkles } from 'lucide-react'
 
 const WS_URL = `ws://${window.location.host}/ws/chat`
 
@@ -86,29 +87,55 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-cream-50">
+      {/* Messages Area */}
       <div className="flex-1 overflow-y-auto">
         {messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-white mb-2">Maya Chat</h2>
-              <p>How can I help you today?</p>
+          <div className="flex items-center justify-center h-full px-4">
+            <div className="text-center max-w-lg">
+              <div className="w-16 h-16 mx-auto mb-6 bg-amber-100 rounded-2xl flex items-center justify-center">
+                <Sparkles className="w-8 h-8 text-amber-500" />
+              </div>
+              <h2 className="text-3xl font-serif font-semibold text-warm-800 mb-3">
+                Maya Chat
+              </h2>
+              <p className="text-warm-500 text-lg">
+                How can I help you today?
+              </p>
             </div>
           </div>
         ) : (
-          messages.map(msg => <ChatMessage key={msg.id} message={msg} />)
-        )}
-        {isTyping && (
-          <div className="flex gap-4 p-6 bg-gray-950">
-            <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-            </div>
-            <div className="text-gray-400">Claude is thinking...</div>
+          <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+            {messages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
+            {isTyping && (
+              <div className="flex gap-4 py-4">
+                <div className="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center">
+                  <div className="w-2 h-2 bg-amber-600 rounded-full animate-pulse" />
+                </div>
+                <div className="text-warm-500 flex items-center gap-2">
+                  <span>Claude is thinking</span>
+                  <span className="flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-warm-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 bg-warm-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 bg-warm-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
         )}
-        <div ref={messagesEndRef} />
       </div>
-      <ChatInput onSend={handleSend} />
+
+      {/* Input Area */}
+      <div className="border-t border-warm-200 bg-cream-50 p-4">
+        <div className="max-w-3xl mx-auto">
+          <ChatInput onSend={handleSend} />
+          <p className="text-center text-xs text-warm-400 mt-3">
+            Maya can make mistakes. Please verify important information.
+          </p>
+        </div>
+      </div>
     </div>
   )
 }

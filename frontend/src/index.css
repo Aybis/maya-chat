@@ -1,9 +1,37 @@
 @import "tailwindcss";
 @import "highlight.js/styles/github-dark.css";
 
+@theme {
+  --color-cream-50: #faf9f6;
+  --color-cream-100: #f5f3ed;
+  --color-cream-200: #ebe7df;
+  --color-cream-300: #ddd8cc;
+  --color-amber-50: #fff8ed;
+  --color-amber-100: #ffecc7;
+  --color-amber-200: #ffd988;
+  --color-amber-300: #ffc24a;
+  --color-amber-400: #f5a623;
+  --color-amber-500: #d4880a;
+  --color-amber-600: #b36d00;
+  --color-amber-700: #8c5400;
+  --color-warm-50: #faf8f5;
+  --color-warm-100: #f3efe8;
+  --color-warm-200: #e8e2d6;
+  --color-warm-300: #d4ccbb;
+  --color-warm-400: #b8aa96;
+  --color-warm-500: #9c8d78;
+  --color-warm-600: #7a6e5d;
+  --color-warm-700: #5c5345;
+  --color-warm-800: #3d362f;
+  --color-warm-900: #2a2520;
+  --color-warm-950: #1a1714;
+  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 * {
   scrollbar-width: thin;
-  scrollbar-color: #4b5563 transparent;
+  scrollbar-color: var(--color-warm-400) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -15,16 +43,32 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #4b5563;
+  background-color: var(--color-warm-400);
   border-radius: 3px;
 }
 
+body {
+  font-family: var(--font-sans);
+  background: var(--color-cream-50);
+  color: var(--color-warm-900);
+}
+
 .prose pre {
-  background: #1a1a2e !important;
-  border-radius: 8px;
+  background: var(--color-warm-900) !important;
+  border-radius: 12px;
 }
 
 .prose code {
-  color: #e94560;
+  color: var(--color-amber-400);
   font-weight: 500;
+  background: var(--color-warm-100);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.875em;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
 }
